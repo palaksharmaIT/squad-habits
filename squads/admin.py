@@ -1,3 +1,6 @@
 from django.contrib import admin
+from .models import Squad, SquadMember, InviteLink
 
-# Register your models here.
+admin.site.register(Squad)
+admin.site.register(SquadMember)
+admin.site.register(InviteLink)

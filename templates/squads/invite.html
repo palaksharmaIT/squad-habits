@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .invite-container {
+        max-width: 700px;
+        margin: 60px auto;
+        padding: 30px;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .invite-container h2 {
+        color: #333;
+        margin-bottom: 15px;
+    }
+
+    .invite-container p {
+        color: #666;
+        margin-bottom: 20px;
+    }
+
+    .invite-input {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 15px;
+        background: #f8f9fa;
+        margin-bottom: 20px;
+        box-sizing: border-box;
+    }
+
+    .copy-btn {
+        background: #4CAF50;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 15px;
+        margin-bottom: 20px;
+    }
+
+    .copy-btn:hover {
+        background: #45a049;
+    }
+
+    .invite-link {
+        display: inline-block;
+        margin-top: 10px;
+        color: #0d6efd;
+        text-decoration: none;
+        word-break: break-all;
+    }
+
+    .invite-link:hover {
+        text-decoration: underline;
+    }
+</style>
+
+<div class="invite-container">
+    <h2>🔗 Squad Invite Link</h2>
+
+    <p>Share this link with your friends to let them join your squad.</p>
+
+    <input
+        type="text"
+        id="inviteLink"
+        class="invite-input"
+        value="{{ invite_url }}"
+        readonly
+    >
+
+    <button class="copy-btn" onclick="copyLink()">
+        Copy Link
+    </button>
+
+    <br>
+
+    <a href="{{ invite_url }}" target="_blank" class="invite-link">
+        {{ invite_url }}
+    </a>
+</div>
+
+<script>
+function copyLink() {
+    const input = document.getElementById("inviteLink");
+    input.select();
+    input.setSelectionRange(0, 99999);
+
+    navigator.clipboard.writeText(input.value);
+
+    alert("Invite link copied!");
+}
+</script>
+
+{% endblock %}

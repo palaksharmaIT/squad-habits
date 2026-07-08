@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% block title %}My Squads{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h1>My Squads</h1>
+    <a href="{% url 'create_squad' %}" class="btn btn-primary">+ Create Squad</a>
+</div>
+
+{% if squads %}
+<div class="card-grid">
+    {% for squad in squads %}
+    <a href="{% url 'squad_detail' squad.id %}" class="card" style="display: block;">
+        <h3>{{ squad.name }}</h3>
+        <p>Created {{ squad.created_at|date:"M d, Y" }}</p>
+    </a>
+    {% endfor %}
+</div>
+{% else %}
+<div class="card">
+    <h3>No squads yet</h3>
+    <p>Ek squad banao ya kisi ke invite link se join karo.</p>
+    <a href="{% url 'create_squad' %}" class="btn btn-primary" style="margin-top: 12px; display: inline-block;">+ Create Squad</a>
+</div>
+{% endif %}
+{% endblock %}

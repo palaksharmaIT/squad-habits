@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Squad{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div>
+        <h1>Create a New Squad</h1>
+        <p class="page-subtitle">Bring your friends together and start a shared habit journey.</p>
+    </div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        <div class="error-message">
+            {{ message }}
+        </div>
+    {% endfor %}
+{% endif %}
+
+<div class="card form-card">
+    <form method="POST">
+        {% csrf_token %}
+
+        <label for="name">Squad Name</label>
+
+        <input
+            type="text"
+            name="name"
+            id="name"
+            placeholder="e.g. Fitness Squad"
+            required
+        >
+
+        <button type="submit" class="btn btn-primary">
+            Create Squad
+        </button>
+    </form>
+</div>
+
+{% endblock %}

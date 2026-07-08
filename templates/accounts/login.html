@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+
+<div class="login-container">
+
+    <div class="login-card">
+
+        <h1>Welcome Back 👋</h1>
+        <p>Build better habits with your squad.</p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+
+            <button class="btn btn-primary">
+                Login
+            </button>
+        </form>
+
+        <div class="divider">
+            OR
+        </div>
+
+        <a href="{% provider_login_url 'google' %}" class="google-btn">
+            <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20">
+            Continue with Google
+        </a>
+
+    </div>
+
+</div>
+
+{% endblock %}

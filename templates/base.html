@@ -1,17 +1,34 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}Squad Habits{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
 <body>
-    <nav>
-        <h2>🔥 Squad Habits</h2>
-    </nav>
 
-    <main>
-        {% block content %}
-        {% endblock %}
-    </main>
+<nav>
+    <h2>🔥 Squad Habits</h2>
+
+    <div class="nav-links">
+        <a href="/">Home</a>
+        <a href="{% url 'squad_list' %}">My Squads</a>
+
+        {% if user.is_authenticated %}
+            <span class="welcome-text">👋 {{ user.first_name|default:user.username }}</span>
+            <a href="{% url 'account_logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'account_login' %}">Login with Google</a>
+        {% endif %}
+    </div>
+</nav>
+
+<main>
+    {% block content %}
+    {% endblock %}
+</main>
+
 </body>
 </html>
