@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from squads.models import Squad
 
 
+
 class Habit(models.Model):
     squad = models.ForeignKey(Squad, on_delete=models.CASCADE, related_name='habits')
     title = models.CharField(max_length=100)

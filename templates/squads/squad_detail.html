@@ -4,34 +4,237 @@
 
 {% block content %}
 
-<h1>{{ squad.name }}</h1>
-<p><strong>Admin:</strong> {{ squad.admin.username }}</p>
+<style>
+.page{
+    max-width:900px;
+    margin:auto;
+}
 
-<!-- Generate Invite Button -->
-<div style="margin:20px 0;">
-    <a href="{% url 'generate_invite' squad.id %}"
-       style="
-       background:#ff3b5c;
-       color:white;
-       padding:12px 20px;
-       text-decoration:none;
-       border-radius:8px;
-       font-weight:bold;">
-        🔗 Generate Invite Link
-    </a>
-</div>
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    margin-bottom:25px;
+}
 
-<h3>Members ({{ members.count }})</h3>
+.header h1{
+    margin:0;
+    color:#222;
+}
 
-<div class="card" style="margin-top:12px;">
-    {% for member in members %}
-        <div class="leaderboard-row">
-            <span>{{ member.user.username }}</span>
-            <span>Joined {{ member.joined_at|date:"M d, Y" }}</span>
+.admin{
+    color:#666;
+    margin-top:8px;
+}
+
+.btn-group{
+    display:flex;
+    gap:12px;
+    margin:25px 0;
+    flex-wrap:wrap;
+}
+
+.btn{
+    padding:12px 22px;
+    border-radius:8px;
+    color:white;
+    text-decoration:none;
+    font-weight:bold;
+}
+
+.invite-btn{
+    background:#ff3b5c;
+}
+
+.habit-btn{
+    background:#28a745;
+}
+
+.card{
+    background:#fff;
+    border-radius:10px;
+    padding:20px;
+    box-shadow:0 4px 12px rgba(0,0,0,.08);
+    margin-bottom:30px;
+}
+
+.section-title{
+    margin-bottom:15px;
+    color:#333;
+}
+
+.row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:14px 0;
+    border-bottom:1px solid #eee;
+}
+
+.row:last-child{
+    border-bottom:none;
+}
+
+.done{
+    background:#28a745;
+    color:white;
+    padding:8px 15px;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+.mark-btn{
+    background:#dc3545;
+    color:white;
+    border:none;
+    padding:10px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.mark-btn:hover{
+    background:#c82333;
+}
+
+.empty{
+    text-align:center;
+    color:#888;
+    padding:20px;
+}
+
+small{
+    color:#777;
+}
+</style>
+
+<div class="page">
+
+    <div class="header">
+
+        <div>
+            <h1>🏆 {{ squad.name }}</h1>
+            <p class="admin">
+                <strong>Admin:</strong> {{ squad.admin.username }}
+            </p>
         </div>
-    {% empty %}
-        <p>No members yet.</p>
-    {% endfor %}
+
+    </div>
+
+    {% if is_admin %}
+    <div class="btn-group">
+
+        <a href="{% url 'generate_invite' squad.id %}" class="btn invite-btn">
+            🔗 Generate Invite
+        </a>
+
+        <a href="{% url 'create_habit' squad.id %}" class="btn habit-btn">
+            ➕ Create Habit
+        </a>
+
+    </div>
+    {% endif %}
+
+
+    <!-- MEMBERS -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            👥 Members ({{ members.count }})
+        </h2>
+
+        {% for member in members %}
+
+        <div class="row">
+
+            <div>
+                <strong>{{ member.user.username }}</strong>
+            </div>
+
+            <small>
+                Joined {{ member.joined_at|date:"M d, Y" }}
+            </small>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+            No members yet.
+        </div>
+
+        {% endfor %}
+
+    </div>
+
+
+    <!-- HABITS -->
+
+    <div class="card">
+
+        <h2 class="section-title">
+            🔥 Habits ({{ habits.count }})
+        </h2>
+
+        {% for habit in habits %}
+
+        <div class="row">
+
+            <div>
+
+                <strong>{{ habit.title }}</strong>
+
+                <br>
+
+                <small>
+                    Created by {{ habit.created_by.username }}
+                </small>
+
+            </div>
+
+            <div>
+
+                {% if habit.id in completed_habits %}
+
+                    <span class="done">
+                        ✅ Done
+                    </span>
+
+                {% else %}
+
+                    <form method="POST"
+                          action="{% url 'mark_habit_done' habit.id %}">
+
+                        {% csrf_token %}
+
+                        <button type="submit" class="mark-btn">
+                            ❌ Mark Done
+                        </button>
+
+                    </form>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% empty %}
+
+        <div class="empty">
+
+            <h3>No Habits Yet</h3>
+
+            <p>Create your first habit and start tracking.</p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
 </div>
 
 {% endblock %}

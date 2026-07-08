@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+.join-card{
+    max-width:600px;
+    margin:60px auto;
+    background:#fff;
+    border-radius:12px;
+    padding:35px;
+    text-align:center;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
+}
+
+.join-card h2{
+    margin-bottom:10px;
+}
+
+.join-card p{
+    color:#666;
+    margin-bottom:25px;
+}
+
+.join-btn{
+    background:#28a745;
+    color:#fff;
+    padding:12px 28px;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.join-btn:hover{
+    background:#218838;
+}
+
+.cancel{
+    display:inline-block;
+    margin-top:15px;
+    color:#777;
+    text-decoration:none;
+}
+</style>
+
+<div class="join-card">
+
+    <h2>🎉 Squad Invitation</h2>
+
+    <p>
+        You have been invited to join
+        <strong>{{ squad.name }}</strong>
+    </p>
+
+    <p>
+        Squad Admin:
+        <strong>{{ squad.admin.username }}</strong>
+    </p>
+
+    <form method="POST">
+        {% csrf_token %}
+        <button class="join-btn">
+            Join Squad
+        </button>
+    </form>
+
+    <a href="{% url 'squad_list' %}" class="cancel">
+        Cancel
+    </a>
+
+</div>
+
+{% endblock %}

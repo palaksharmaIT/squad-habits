@@ -6,6 +6,8 @@ from django.http import HttpResponse
 from django.utils import timezone
 from .models import Squad, SquadMember, InviteLink
 import re
+from habits.models import Habit, HabitLog
+
 
 
 @login_required
@@ -54,25 +56,6 @@ def create_squad(request):
     return render(request, "squads/create_squad.html")
 
 
-@login_required
-def squad_detail(request, squad_id):
-    squad = get_object_or_404(Squad, id=squad_id)
-
-    # Allow only squad members
-    if not SquadMember.objects.filter(
-        squad=squad,
-        user=request.user
-    ).exists():
-        return HttpResponse("Permission Denied", status=403)
-
-    members = SquadMember.objects.filter(
-        squad=squad
-    ).select_related("user")
-
-    return render(request, "squads/squad_detail.html", {
-        "squad": squad,
-        "members": members
-    })
 
 
 @login_required
@@ -127,4 +110,144 @@ def join_squad(request, token):
     return redirect(
         "squad_detail",
         squad_id=invite.squad.id
+    )
+
+
+@login_required
+def create_habit(request, squad_id):
+    squad = get_object_or_404(Squad, id=squad_id)
+
+    # Only squad admin can create habits
+    if squad.admin != request.user:
+        return HttpResponse("Permission Denied", status=403)
+
+    if request.method == "POST":
+        title = request.POST.get("title", "").strip()
+
+        if not title:
+            messages.error(request, "Habit title is required.")
+        else:
+            Habit.objects.create(
+                squad=squad,
+                title=title,
+                created_by=request.user
+            )
+
+            messages.success(request, "Habit created successfully.")
+            return redirect("squad_detail", squad_id=squad.id)
+
+    return render(request, "habits/create_habit.html", {
+        "squad": squad
+    })
+
+
+
+@login_required
+def mark_habit_done(request, habit_id):
+
+    print("MARK DONE VIEW CALLED")
+    print(request.method)
+
+    habit = get_object_or_404(Habit, id=habit_id)
+
+    # Check user is member of squad
+    if not SquadMember.objects.filter(
+        squad=habit.squad,
+        user=request.user
+    ).exists():
+        return HttpResponse("Permission Denied", status=403)
+
+    # Mark today's habit as done
+    HabitLog.objects.update_or_create(
+        habit=habit,
+        user=request.user,
+        date=timezone.now().date(),
+        defaults={
+            "is_done": True
+        }
+    )
+
+    print("Habit Saved Successfully")
+
+    messages.success(request, "Habit marked as completed!")
+
+    return redirect("squad_detail", squad_id=habit.squad.id)
+
+@login_required
+def squad_detail(request, squad_id):
+    squad = get_object_or_404(Squad, id=squad_id)
+
+    # Allow only squad members
+    if not SquadMember.objects.filter(
+        squad=squad,
+        user=request.user
+    ).exists():
+        return HttpResponse("Permission Denied", status=403)
+
+    members = SquadMember.objects.filter(
+        squad=squad
+    ).select_related("user")
+
+    habits = Habit.objects.filter(
+        squad=squad
+    )
+
+    completed_habits = HabitLog.objects.filter(
+        user=request.user,
+        date=timezone.now().date(),
+        is_done=True
+    ).values_list("habit_id", flat=True)
+
+    return render(request, "squads/squad_detail.html", {
+        "squad": squad,
+        "members": members,
+        "habits": habits,
+        "completed_habits": completed_habits,
+        "is_admin": squad.admin == request.user,
+    })
+
+
+@login_required
+def join_squad(request, token):
+
+    invite = get_object_or_404(
+        InviteLink,
+        token=token
+    )
+
+    if not invite.is_valid():
+        return HttpResponse("Invite link has expired.", status=400)
+
+    # Already joined
+    if SquadMember.objects.filter(
+        squad=invite.squad,
+        user=request.user
+    ).exists():
+
+        messages.info(request, "You are already a member.")
+        return redirect("squad_detail", squad_id=invite.squad.id)
+
+    if request.method == "POST":
+
+        SquadMember.objects.create(
+            squad=invite.squad,
+            user=request.user
+        )
+
+        messages.success(
+            request,
+            f"You joined '{invite.squad.name}' successfully!"
+        )
+
+        return redirect(
+            "squad_detail",
+            squad_id=invite.squad.id
+        )
+
+    return render(
+        request,
+        "squads/join_squad.html",
+        {
+            "squad": invite.squad
+        }
     )

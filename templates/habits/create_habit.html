@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}Create Habit{% endblock %}
+
+{% block content %}
+
+<style>
+    *{
+        box-sizing: border-box;
+    }
+
+    .habit-container{
+        max-width: 500px;
+        margin: 60px auto;
+        background: #ffffff;
+        padding: 35px;
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+
+    .habit-container h2{
+        text-align: center;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .habit-container p{
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+
+    .habit-container label{
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #444;
+    }
+
+    .habit-container input{
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 15px;
+        outline: none;
+        margin-bottom: 20px;
+        transition: .3s;
+    }
+
+    .habit-container input:focus{
+        border-color: #ff4d6d;
+        box-shadow: 0 0 5px rgba(255,77,109,.4);
+    }
+
+    .create-btn{
+        width: 100%;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        background: #ff4d6d;
+        color: white;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: .3s;
+    }
+
+    .create-btn:hover{
+        background: #e63956;
+    }
+
+    .back-btn{
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #555;
+        font-weight: bold;
+    }
+
+    .back-btn:hover{
+        color: #ff4d6d;
+    }
+</style>
+
+<div class="habit-container">
+
+    <h2>➕ Create Habit</h2>
+
+    <p>
+        Squad :
+        <strong>{{ squad.name }}</strong>
+    </p>
+
+    <form method="POST">
+
+        {% csrf_token %}
+
+        <label>Habit Name</label>
+
+        <input
+            type="text"
+            name="title"
+            placeholder="Example: Drink 3L Water"
+            required
+        >
+
+        <button type="submit" class="create-btn">
+            Create Habit
+        </button>
+
+    </form>
+
+    <a href="{% url 'squad_detail' squad.id %}" class="back-btn">
+        ← Back to Squad
+    </a>
+
+</div>
+
+{% endblock %}

@@ -3,7 +3,9 @@ from . import views
 
 urlpatterns = [
     path('', views.squad_list, name='squad_list'),
+
     path('create/', views.create_squad, name='create_squad'),
+
     path('<int:squad_id>/', views.squad_detail, name='squad_detail'),
 
     path(
@@ -12,5 +14,21 @@ urlpatterns = [
         name='generate_invite'
     ),
 
-path("join/<uuid:token>/", views.join_squad, name="join_squad")
+    path(
+        'join/<uuid:token>/',
+        views.join_squad,
+        name='join_squad'
+    ),
+
+    path(
+        '<int:squad_id>/habits/create/',
+        views.create_habit,
+        name='create_habit'
+    ),
+
+    path(
+        'habit/<int:habit_id>/done/',
+        views.mark_habit_done,
+        name='mark_habit_done'
+    ),
 ]

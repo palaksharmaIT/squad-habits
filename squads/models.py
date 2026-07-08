@@ -5,6 +5,7 @@ from django.utils import timezone
 from datetime import timedelta
 
 
+
 class Squad(models.Model):
     name = models.CharField(max_length=100)
     admin = models.ForeignKey(User, on_delete=models.CASCADE, related_name='admin_squads')
@@ -43,5 +44,5 @@ class InviteLink(models.Model):
         return f"Invite for {self.squad.name}"
     
 
-  
+
     
